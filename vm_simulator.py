@@ -19,6 +19,7 @@ import time
 from multiprocessing import Process
 import json
 import psutil
+from ip_assignment import assign_ip, create_network, delete_network, networks
 
 def simulate_vm(vm_id, vm_dict):
     """
@@ -46,11 +47,19 @@ def start_vm(vm_id, vms, manager):
         dict: A dictionary containing the result of the operation.
     """
     if vm_id not in vms or vms[vm_id]["status"] == "stopped":
-        vm_dict = manager.dict({'pid': None, 'cpu': None, 'memory': None, 'status': 'running'})
+        network_id = create_network(vm_id)
+        ip = assign_ip(network_id)
+        vm_dict = manager.dict({'pid': None,
+                                'cpu': None,
+                                'memory': None,
+                                'status': 'running',
+                                'ip': ip
+                                })
         p=Process(target=simulate_vm, args=(vm_id, vm_dict))
         p.start()
         vm_dict['pid'] = p.pid
         vms[vm_id] = vm_dict
+        networks[network_id]["vms"].append(vm_id)
         return {"message": f"VM {vm_id} started!"}
     return {"error": f"VM {vm_id} already running!"}
 
@@ -74,6 +83,8 @@ def stop_vm(vm_id, vms):
             vm_dict["pid"] = None
             vm_dict["cpu"] = None
             vm_dict["memory"] = None
+            vm_dict["ip"] = None
+            delete_network(vm_id)
             return {"message": f"VM {vm_id} stopped!"}
         return {"error": f"VM {vm_id} already stopped!"}
     return {"error": f"VM {vm_id} not found!"}
@@ -92,6 +103,7 @@ def delete_vm(vm_id, vms):
             p = psutil.Process(vms[vm_id]["pid"])
             p.terminate()
             p.wait()
+        delete_network(vm_id)
         del vms[vm_id]
         return {"message": f"VM {vm_id} deleted!"}
     return {"error": f"VM {vm_id} not found!"}
@@ -112,7 +124,8 @@ def monitor_vm(vm_id, vms):
             "status": vm_dict["status"],
             "pid": vm_dict["pid"],
             "cpu": vm_dict["cpu"],
-            "memory": vm_dict["memory"]
+            "memory": vm_dict["memory"],
+            "ip": vm_dict["ip"]
         }
     return {"error": f"VM {vm_id} not found!"}
 
@@ -133,7 +146,8 @@ def display_vms(vms):
             "status": vm_dict.get("status"),
             "pid": vm_dict.get("pid"),
             "cpu": vm_dict.get("cpu"),
-            "memory": vm_dict.get("memory")
+            "memory": vm_dict.get("memory"),
+            "ip": vm_dict.get("ip")
         })
     print(json.dumps({"vms": vm_list}, indent=4))
     return {"vms": vm_list}
