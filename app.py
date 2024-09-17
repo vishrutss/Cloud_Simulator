@@ -18,8 +18,9 @@ Dependencies:
 """
 
 from multiprocessing import Manager
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from vm_simulator import start_vm, stop_vm, monitor_vm, delete_vm, display_vms
+from storage import create_bucket, upload_file, delete_file, delete_bucket
 
 app = Flask(__name__)
 
@@ -89,6 +90,57 @@ def display_vms_route():
         JSON response with the status of all VMs.
     """
     return jsonify(display_vms(vms))
+
+@app.route('/create_bucket/<bucket_name>', methods=['POST'])
+def create_storage_bucket(bucket_name):
+    """
+    Route to create a new bucket with the specified name.
+    Args:
+        bucket_name (str): The name of the bucket to create.
+    Returns:
+        JSON response with the result of the operation.
+    """
+    result = create_bucket(bucket_name)
+    return jsonify(result)
+
+@app.route('/upload_file/<bucket_name>/<file_name>', methods=['POST'])
+def upload_storage_file(bucket_name, file_name):
+    """
+    Route to upload a file to the specified bucket.
+    Args:
+        bucket_name (str): The name of the bucket to upload the file to.
+        file_name (str): The name of the file to upload.
+    Returns:
+        JSON response with the result of the operation.
+    """
+    file_content = request.json.get('content')
+    result = upload_file(bucket_name, file_name, file_content)
+    return jsonify(result)
+
+@app.route('/delete_file/<bucket_name>/<file_name>', methods=['DELETE'])
+def delete_storage_file(bucket_name, file_name):
+    """
+    Route to delete a file from the specified bucket.
+    Args:
+        bucket_name (str): The name of the bucket to delete the file from.
+        file_name (str): The name of the file to delete.
+    Returns:
+        JSON response with the result of the operation.
+    """
+    result = delete_file(bucket_name, file_name)
+    return jsonify(result)
+
+@app.route('/delete_bucket/<bucket_name>', methods=['DELETE'])
+def delete_storage_bucket(bucket_name):
+    """
+    Route to delete a bucket with the specified name.
+    Args:
+        bucket_name (str): The name of the bucket to delete.
+    Returns:
+        JSON response with the result of the operation.
+    """
+    result = delete_bucket(bucket_name)
+    return jsonify(result)
 
 if __name__ == '__main__':
     manager = Manager()
