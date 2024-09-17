@@ -21,6 +21,7 @@ from multiprocessing import Manager
 from flask import Flask, jsonify, request
 from vm_simulator import start_vm, stop_vm, monitor_vm, delete_vm, display_vms
 from storage import create_bucket, upload_file, delete_file, delete_bucket
+from cdn import upload_to_origin, serve_from_nearest_edge
 
 app = Flask(__name__)
 
@@ -34,6 +35,8 @@ def home():
         JSON response with a message.
     """
     return jsonify({"message": "Cloud Simulator is running!"})
+
+# Virtual Machine Routes
 
 @app.route('/start_vm/<int:vm_id>', methods=['POST'])
 def start_vm_route(vm_id):
@@ -91,6 +94,9 @@ def display_vms_route():
     """
     return jsonify(display_vms(vms))
 
+
+# Storage Routes
+
 @app.route('/create_bucket/<bucket_name>', methods=['POST'])
 def create_storage_bucket(bucket_name):
     """
@@ -140,6 +146,34 @@ def delete_storage_bucket(bucket_name):
         JSON response with the result of the operation.
     """
     result = delete_bucket(bucket_name)
+    return jsonify(result)
+
+# CDN Routes
+
+@app.route('/upload_to_origin/<file_name>', methods=['POST'])
+def upload_to_origin_server(file_name):
+    """
+    Route to upload a file to the origin server.
+    Args:
+        file_name (str): The name of the file to upload.
+    Returns:
+        JSON response with the result of the operation.
+    """
+    content = request.json.get('content')
+    result = upload_to_origin(file_name, content)
+    return jsonify(result)
+
+@app.route('/get_file/<file_name>/<int:user_location>', methods=['GET'])
+def get_file_from_nearest_edge(file_name, user_location):
+    """
+    Route to serve a file from the nearest edge server based on the user's location.
+    Args:
+        file_name (str): The name of the file to serve.
+        user_location (int): The location of the user.
+    Returns:
+        JSON response with the content of the file and the server it was served from.
+    """
+    result = serve_from_nearest_edge(file_name, user_location)
     return jsonify(result)
 
 if __name__ == '__main__':
