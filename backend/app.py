@@ -20,8 +20,8 @@ Dependencies:
 from multiprocessing import Manager
 from flask import Flask, jsonify, request
 from vm_simulator import start_vm, stop_vm, monitor_vm, delete_vm, display_vms
-from storage import create_bucket, upload_file, delete_file, delete_bucket
 from cdn import upload_to_origin, serve_from_nearest_edge
+from storage import create_bucket, upload_file, delete_file, delete_bucket
 
 app = Flask(__name__)
 
