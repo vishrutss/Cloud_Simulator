@@ -17,7 +17,6 @@ Dependencies:
 
 import time
 from multiprocessing import Process
-import json
 import psutil
 from ip_assignment import assign_ip, create_network, delete_network, networks
 
@@ -149,5 +148,4 @@ def display_vms(vms):
             "memory": vm_dict.get("memory"),
             "ip": vm_dict.get("ip")
         })
-    print(json.dumps({"vms": vm_list}, indent=4))
     return {"vms": vm_list}
