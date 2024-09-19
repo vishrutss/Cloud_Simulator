@@ -61,7 +61,7 @@ def start_vm(vm_id, vms, manager):
         vms[vm_id] = vm_dict
         networks[network_id]["vms"].append(vm_id)
         return {"message": f"VM {vm_id} started!"}
-    return {"error": f"VM {vm_id} already running!"}
+    return {"message": f"VM {vm_id} already running!"}
 
 def stop_vm(vm_id, vms):
     """
@@ -86,8 +86,8 @@ def stop_vm(vm_id, vms):
             vm_dict["ip"] = None
             delete_network(vm_id)
             return {"message": f"VM {vm_id} stopped!"}
-        return {"error": f"VM {vm_id} already stopped!"}
-    return {"error": f"VM {vm_id} not found!"}
+        return {"message": f"VM {vm_id} already stopped!"}
+    return {"message": f"VM {vm_id} not found!"}
 
 def delete_vm(vm_id, vms):
     """
@@ -106,7 +106,7 @@ def delete_vm(vm_id, vms):
         delete_network(vm_id)
         del vms[vm_id]
         return {"message": f"VM {vm_id} deleted!"}
-    return {"error": f"VM {vm_id} not found!"}
+    return {"message": f"VM {vm_id} not found!"}
 
 def monitor_vm(vm_id, vms):
     """
@@ -127,7 +127,7 @@ def monitor_vm(vm_id, vms):
             "memory": vm_dict["memory"],
             "ip": vm_dict["ip"]
         }
-    return {"error": f"VM {vm_id} not found!"}
+    return {"message": f"VM {vm_id} not found!"}
 
 def display_vms(vms):
     """
