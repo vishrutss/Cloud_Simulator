@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../VmManagement.css';
+import '../styles/VmManagement.css';
 
 function VmManagement() {
     const [vmId, setVmId] = useState('');

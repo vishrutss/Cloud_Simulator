@@ -119,7 +119,8 @@ def upload_storage_file(bucket_name, file_name):
     Returns:
         JSON response with the result of the operation.
     """
-    file_content = request.json.get('content')
+    file = request.files['file']
+    file_content = file.read()
     result = upload_file(bucket_name, file_name, file_content)
     return jsonify(result)
 
