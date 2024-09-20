@@ -37,7 +37,7 @@ def create_bucket(bucket_name):
     if not os.path.exists(bucket_path):
         os.makedirs(bucket_path)
         return {"message": f"Bucket {bucket_name} created!"}
-    return {"error": f"Bucket {bucket_name} already exists!"}
+    return {"message": f"Bucket {bucket_name} already exists!"}
 
 def upload_file(bucket_name, file_name, file_content):
     """
@@ -53,7 +53,7 @@ def upload_file(bucket_name, file_name, file_content):
     if not os.path.exists(bucket_path):
         return {"error": f"Bucket {bucket_name} does not exist!"}
     file_path = os.path.join(bucket_path, file_name)
-    with open(file_path, 'w', encoding='utf-8') as f:
+    with open(file_path, 'wb') as f:
         f.write(file_content)
     return {"message": f"File {file_name} uploaded to {bucket_name}!"}
 
@@ -70,7 +70,7 @@ def delete_file(bucket_name, file_name):
     if os.path.exists(file_path):
         os.remove(file_path)
         return {"message": f"File {file_name} deleted from {bucket_name}!"}
-    return {"error": f"File {file_name} does not exist in {bucket_name}!"}
+    return {"message": f"File {file_name} does not exist in {bucket_name}!"}
 
 def delete_bucket(bucket_name):
     """
@@ -82,6 +82,8 @@ def delete_bucket(bucket_name):
     """
     bucket_path = os.path.join(ROOT_STORAGE_DIR, bucket_name)
     if os.path.exists(bucket_path):
+        if os.listdir(bucket_path):
+            return {"message": f"Bucket {bucket_name} is not empty and cannot be deleted!"}
         os.rmdir(bucket_path)
         return {"message": f"Bucket {bucket_name} deleted!"}
-    return {"error": f"Bucket {bucket_name} does not exist!"}
+    return {"message": f"Bucket {bucket_name} does not exist!"}

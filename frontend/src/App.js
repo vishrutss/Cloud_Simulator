@@ -1,14 +1,15 @@
 import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import VmManagementPage from './components/VmManagement';
+import VmManagement from './components/VmManagement';
+import StorageManagement from './components/StorageManagement';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route 
-          path="/" 
+        <Route
+          path="/"
           element={
             <div className="App">
               <header className="App-header">
@@ -16,11 +17,15 @@ function App() {
                 <Link to="/vm-management">
                   <button>Go to VM Management</button>
                 </Link>
+                <Link to="/storage-management">
+                  <button>Go to Storage Management</button>
+                </Link>
               </header>
             </div>
-          } 
+          }
         />
-        <Route path="/vm-management" element={<VmManagementPage />} />
+        <Route path="/vm-management" element={<VmManagement />} />
+        <Route path="/storage-management" element={<StorageManagement />} />
       </Routes>
     </Router>
   );

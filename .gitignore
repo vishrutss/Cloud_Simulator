@@ -164,6 +164,8 @@ cython_debug/
 # Storage folder
 /storage/
 /cdn_storage/
+*/storage/
+*/cdn_storage/
 
 # React
 
