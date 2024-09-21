@@ -20,7 +20,7 @@ Dependencies:
 from multiprocessing import Manager
 from flask import Flask, jsonify, request
 from vm_simulator import start_vm, stop_vm, monitor_vm, delete_vm, display_vms
-from cdn import upload_to_origin, serve_from_nearest_edge
+from cdn import upload_to_origin, delete_from_origin, serve_from_nearest_edge
 from storage import create_bucket, upload_file, delete_file, delete_bucket
 
 app = Flask(__name__)
@@ -160,8 +160,9 @@ def upload_to_origin_server(file_name):
     Returns:
         JSON response with the result of the operation.
     """
-    content = request.json.get('content')
-    result = upload_to_origin(file_name, content)
+    file = request.files['file']
+    file_content = file.read()
+    result = upload_to_origin(file_name, file_content)
     return jsonify(result)
 
 @app.route('/get_file/<file_name>/<int:user_location>', methods=['GET'])
@@ -175,6 +176,18 @@ def get_file_from_nearest_edge(file_name, user_location):
         JSON response with the content of the file and the server it was served from.
     """
     result = serve_from_nearest_edge(file_name, user_location)
+    return jsonify(result)
+
+@app.route('/delete_from_origin/<file_name>', methods=['DELETE'])
+def delete_from_origin_server(file_name):
+    """
+    Route to delete a file from the origin server and all edge servers.
+    Args:
+        file_name (str): The name of the file to delete.
+    Returns:
+        JSON response with the result of the operation.
+    """
+    result = delete_from_origin(file_name)
     return jsonify(result)
 
 if __name__ == '__main__':
