@@ -144,8 +144,6 @@ def display_vms(vms):
             "vm_id": vm_id,
             "status": vm_dict.get("status"),
             "pid": vm_dict.get("pid"),
-            "cpu": vm_dict.get("cpu"),
-            "memory": vm_dict.get("memory"),
             "ip": vm_dict.get("ip")
         })
     return {"vms": vm_list}
